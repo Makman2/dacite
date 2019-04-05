@@ -16,6 +16,7 @@ class Config:
     remap: Dict[str, str] = dc_field(default_factory=dict)
     prefixed: Dict[str, str] = dc_field(default_factory=dict)
     cast: List[str] = dc_field(default_factory=list)
+    cast_all: bool = False
     transform: Dict[str, Callable[[Any], Any]] = dc_field(default_factory=dict)
     flattened: List[str] = dc_field(default_factory=list)
     forward_references: Optional[Dict[str, Any]] = None
@@ -55,7 +56,7 @@ class Config:
                 raise ValueNotFoundError()
             if field.name in self.transform:
                 value = self.transform[field.name](value)
-            if field.name in self.cast:
+            if self.cast_all or field.name in self.cast:
                 value = cast_value(field.type, value)
         return value
 
